@@ -1,0 +1,131 @@
+.app {
+  background: #eee;
+  min-height: 100vh;
+  .win-container {
+    max-width: 500px;
+    margin: auto;
+    background: #fff;
+    min-height: 100vh;
+    position: relative;
+    background: red;
+    .content {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      width: 100%;
+      position: absolute;
+      h1 {
+        margin-bottom: 30px;
+        color: #fff;
+        font-size: 4rem;
+      }
+      button {
+        border: none;
+        background: #fff;
+        color: red;
+        font-weight: bold;
+        padding: 15px 40px;
+        font-size: 1.1rem;
+        cursor: pointer;
+      }
+    }
+  }
+  .main-container {
+    max-width: 500px;
+    margin: auto;
+    background: #fff;
+    min-height: 100vh;
+    position: relative;
+    .curr-word-bar {
+      background-color: red;
+      padding: 0px 20px;
+      display: flex;
+      align-items: center;
+      min-height: 60px;
+      .word {
+        color: #fff;
+        font-weight: bold;
+        background: rgba(255, 255, 255, 0.5);
+        padding: 7px 0px;
+        width: 35px;
+        text-align: center;
+        margin: 0 10px 0 0;
+        text-transform: uppercase;
+      }
+    }
+    .letters {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      .letter-wrap {
+        padding: 10px 0;
+        width: 19%;
+        text-align: center;
+        .letter {
+          cursor: pointer;
+          display: block;
+          margin: auto;
+          width: 50px;
+          height: 50px;
+          border: 2px solid red;
+          color: red;
+          font-weight: bold;
+          border-radius: 200px;
+          font-size: 1.3rem;
+          padding: 30px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-transform: uppercase;
+        }
+        .letter-inv {
+          color: #fff;
+          background: red;
+        }
+      }
+    }
+    .words {
+      margin-top: 50px;
+
+      .word-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
+        margin-bottom: 30px;
+        .word {
+          font-size: 1.5rem;
+          padding-bottom: 10px;
+          border-bottom: 2px dashed #000;
+          font-weight: bold;
+          text-transform: capitalize;
+        }
+        .word-length {
+          padding: 10px;
+          font-size: 1.5rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: red;
+          border-radius: 200px;
+          width: 40px;
+          height: 40px;
+          color: #fff;
+        }
+      }
+    }
+    .design {
+      position: absolute;
+      bottom: 0;
+      width: 60%;
+      left: 50%;
+      transform: translate(-50%);
+      img {
+        width: 100%;
+        z-index: -1;
+      }
+    }
+  }
+}
