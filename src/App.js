@@ -1,33 +1,15 @@
 import React from 'react'
 import _ from 'lodash'
 import './App.scss'
-
-let initialState = {
-  currWord: '',
-  possibleWords: {
-    apple: {
-      selected: false,
-    },
-    head: {
-      selected: false,
-    },
-    place: {
-      selected: false,
-    },
-    space: {
-      selected: false,
-    },
-    help: {
-      selected: false,
-    },
-  },
-  letters: ['p', 'l', 'p', 't', 's', 'a', 'c', 'e', 'h', 'd'],
-  selectedLetters: {},
-  allSelected: false,
-}
+import data from './data.js'
+import Notifier from './components/Notifier'
+import WinContainer from './components/WinContainer'
+import Indication from './components/Indication'
+import Letters from './components/Letters'
+import Words from './components/Words'
 
 class App extends React.Component {
-  state = JSON.parse(JSON.stringify(initialState))
+  state = JSON.parse(JSON.stringify(data.initialState))
 
   onLetterSelect = (idx) => {
     const { selectedLetters, letters } = this.state
@@ -42,18 +24,35 @@ class App extends React.Component {
   }
 
   onReset = () => {
-    this.setState(JSON.parse(JSON.stringify(initialState)))
+    this.setState(JSON.parse(JSON.stringify(data.initialState)))
   }
 
   checkWin = () => {
     const { possibleWords } = this.state
-    let allSelected = true
+    let countSelected = 0
     for (let letter in possibleWords) {
-      if (!possibleWords[letter].selected) {
-        allSelected = false
+      if (possibleWords[letter].selected) {
+        countSelected = countSelected + 1
       }
     }
-    return allSelected
+    if (countSelected >= 5) {
+      return true
+    }
+    return false
+  }
+
+  setNotifierString = (forReset, str) => {
+    this.setState({
+      notifierString: { forReset, str },
+    })
+    setTimeout(() => {
+      this.setState({
+        notifierString: {
+          forReset: false,
+          str: '',
+        },
+      })
+    }, 1500)
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -62,12 +61,14 @@ class App extends React.Component {
       if (possibleWords[currWord] && !possibleWords[currWord].selected) {
         let updatedPossibleWords = JSON.parse(JSON.stringify(possibleWords))
         updatedPossibleWords[currWord].selected = true
+        this.setNotifierString(false, currWord)
         this.setState({
           possibleWords: updatedPossibleWords,
           currWord: '',
           selectedLetters: {},
         })
       } else if (currWord.length >= letters.length) {
+        this.setNotifierString(true, 'resetting...')
         this.setState({
           currWord: '',
           selectedLetters: {},
@@ -81,6 +82,17 @@ class App extends React.Component {
     }
   }
 
+  getPercentWordCount = () => {
+    const { possibleWords } = this.state
+    let percent = 0
+    for (let word in possibleWords) {
+      if (possibleWords[word].selected) {
+        percent += 20
+      }
+    }
+    return percent
+  }
+
   render() {
     const {
       letters,
@@ -88,62 +100,28 @@ class App extends React.Component {
       possibleWords,
       currWord,
       allSelected,
+      notifierString,
     } = this.state
+
     return (
       <div className="app">
-        {allSelected ? (
-          <div className="win-container">
-            <div className="content">
-              <h1>You Won!</h1>
-              <button onClick={this.onReset}>RESET</button>
-            </div>
+        <div className="main-container">
+          <Notifier notifierString={notifierString} />
+          <WinContainer allSelected={allSelected} onReset={this.onReset} />
+          <div className="curr-word-bar">
+            {currWord.length ? <span className="word">{currWord}</span> : null}
           </div>
-        ) : (
-          <div className="main-container">
-            <div className="curr-word-bar">
-              {[...currWord].map((item, idx) => (
-                <span className="word" key={idx}>
-                  {item}
-                </span>
-              ))}
-            </div>
-            <div className="letters">
-              {letters.map((item, idx) => (
-                <span key={idx} className="letter-wrap">
-                  {selectedLetters[idx] ? (
-                    <span className="letter letter-inv">{item}</span>
-                  ) : (
-                    <span
-                      className="letter"
-                      onClick={() => this.onLetterSelect(idx)}
-                    >
-                      {item}
-                    </span>
-                  )}
-                </span>
-              ))}
-            </div>
-            <div className="words">
-              <div className="words">
-                {Object.keys(possibleWords).map((item, idx) => {
-                  if (possibleWords[item].selected) {
-                    return (
-                      <div key={idx} className="word-wrap">
-                        <span className="word">{item}</span>
-                        <span className="word-length">{item.length}</span>
-                      </div>
-                    )
-                  } else {
-                    return null
-                  }
-                })}
-              </div>
-            </div>
-            <div className="design">
-              <img alt="design" src={require('./assets/bottom-design.png')} />
-            </div>
+          <Indication width={this.getPercentWordCount()} />
+          <Letters
+            letters={letters}
+            selectedLetters={selectedLetters}
+            onLetterSelect={this.onLetterSelect}
+          />
+          <Words possibleWords={possibleWords} />
+          <div className="design">
+            <img alt="design" src={require('./assets/bottom-design.png')} />
           </div>
-        )}
+        </div>
       </div>
     )
   }
